@@ -45,6 +45,10 @@ dump_modify	    1 pad 4
 stats		    5
 stats_style	    step cpu np nattempt ncoll nscoll nscheck
 restart             ${Namr} circle.restart
+
+# adapt the grid around the surface before running the simulation
+adapt_grid          all refine surf all 0.00001 iterate 5 dir 1 0 0
+
 run                 ${Namr}
 adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
                     combine min thresh less more maxlevel 3 cells 2 2 1
