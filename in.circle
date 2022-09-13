@@ -1,0 +1,68 @@
+# 2d flow around a circle with Adaptive Mesh Refinement
+
+seed	    	    12345
+dimension   	    2
+global              gridcut 0.0 comm/sort yes
+
+boundary	    o o p
+
+create_box  	    -0.1 0.1 -0.1 0.1 -0.5 0.5
+create_grid 	    50 50 1
+balance_grid        rcb cell
+
+global              nrho 1.0e+20 fnum 1.0e+19
+global              weight cell volume
+species             air.species N2 
+mixture             air N2 vstream 2100 0 0 temp 50
+
+read_surf           data.circle origin 5.0 5.0 0.0 trans -5.0 -5.0 0.0 scale 0.01 0.01 1
+surf_collide	    1 diffuse 300.0 0.0
+surf_modify         all collide 1
+collide             vss air air.vss
+
+fix                 in emit/face air xlo 
+timestep            1.0e-06
+
+variable            Nstats equal 5
+stats               ${Nstats}
+stats_style         step cpu np nattempt ncoll nscoll nscheck
+
+variable            Nsample equal 10000
+variable            Namr equal 20000
+variable            nstep equal 40000
+
+variable            rmfp equal 2.0
+variable            cmfp equal 4.0
+compute             mfp grid all air nrho
+fix                 mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
+compute             lambda lambda/grid f_mfp NULL N2 kx
+
+dump                1 image all ${Namr} image.*.ppm type type particle no pdiam 0.0005 &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    gline yes 0.0015 box yes 0.005
+dump_modify	    1 pad 4
+
+stats		    5
+stats_style	    step cpu np nattempt ncoll nscoll nscheck
+restart             ${Namr} circle.restart
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                  ${nstep}

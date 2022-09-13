@@ -1,1 +1,1 @@
-# Sparta_Case
+2D flow over circle case with adaptive mesh refinement
