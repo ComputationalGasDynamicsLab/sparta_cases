@@ -27,8 +27,7 @@ echo 'number of mpi ranks:' ${SLURM_NTASKS}
 srun -n $SLURM_NTASKS hostname | sort -u > $SLURM_JOB_ID.hosts
 
 # Run program using mpirun
-#mpirun -np $SLURM_NTASKS -machinefile $SLURM_JOB_ID.hosts spa_talon -in in.circle
-mpirun -np $SLURM_NTASKS -machinefile $SLURM_JOB_ID.hosts spa_talon
+mpirun -np $SLURM_NTASKS -machinefile $SLURM_JOB_ID.hosts spa_talon -in in.circle
 
 # Remove Hosts file
 rm ${SLURM_JOB_ID}.hosts
