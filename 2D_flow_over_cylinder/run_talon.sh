@@ -5,7 +5,7 @@
 ##### Number of nodes
 #SBATCH --nodes=1
 ##### Number of tasks per node
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks-per-node=36
 #SBATCH --job-name=dsmc_2d_test
 #SBATCH --chdir=./
 ##### Output file. This and the error file are the first two things we check when we are troubleshooting issues with your job. 
@@ -27,7 +27,7 @@ echo 'number of mpi ranks:' ${SLURM_NTASKS}
 srun -n $SLURM_NTASKS hostname | sort -u > $SLURM_JOB_ID.hosts
 
 # Run program using mpirun
-mpirun -np $SLURM_NTASKS -machinefile $SLURM_JOB_ID.hosts spa_talon -in in.circle
+mpirun -np $SLURM_NTASKS ./spa_talon -in in.circle
 
 # Remove Hosts file
 rm ${SLURM_JOB_ID}.hosts
