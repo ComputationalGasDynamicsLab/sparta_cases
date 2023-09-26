@@ -32,7 +32,7 @@ echo 'number of mpi ranks:' ${SLURM_NTASKS}
 srun -n $SLURM_NTASKS hostname | sort -u > $SLURM_JOB_ID.hosts
 
 # Run program using mpirun using GPU
-mpirun -np $SLURM_NTASKS ./spa_kokkos_cuda -in in.circle -k on g 2 -sf kk
+mpirun -np $SLURM_NTASKS ./spa_kokkos_talon -in in.circle -k on g 2 -sf kk
 
 # Remove Hosts file
 rm ${SLURM_JOB_ID}.hosts
