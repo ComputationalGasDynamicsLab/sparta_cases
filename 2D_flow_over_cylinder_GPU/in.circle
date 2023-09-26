@@ -37,10 +37,26 @@ compute             mfp grid all air nrho
 fix                 mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
 compute             lambda lambda/grid f_mfp NULL N2 kx
 
-dump                1 image all ${Namr} image.*.ppm type type particle no pdiam 0.0005 &
+# compute and fix for flow field properties
+compute             flow grid all air n nrho u v w temp
+fix                 flow ave/grid all 1 ${Nsample} ${Nsample} c_flow[*]
+
+
+dump                1 image all ${Namr} mesh.*.png type type particle no pdiam 0.0005 &
                     surf one 0.01 size 1024 1024 zoom 8.0 &
                     gline yes 0.0015 box yes 0.005
 dump_modify	    1 pad 4
+dump                2 image all ${Namr} particle.*.png type type particle yes pdiam 0.0005 &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    box yes 0.005
+dump_modify	    2 pad 4
+#dump                2 image all ${Namr} mesh_and_particle.*.ppm type type particle yes pdiam 0.0005 &
+#                    surf one 0.01 size 1024 1024 zoom 8.0 &
+#                    gline yes 0.0015 box yes 0.005
+dump                3 image all ${Namr} flow_vx.*.png type type particle no grid f_flow[2] &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    box yes 0.005
+dump_modify	    3 pad 4
 
 stats		    5
 stats_style	    step cpu np nattempt ncoll nscoll nscheck
