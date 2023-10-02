@@ -13,9 +13,7 @@
 #SBATCH --job-name=dsmc_2d_test
 #SBATCH --chdir=./
 ##### Output file. This and the error file are the first two things we check when we are troubleshooting issues with your job. 
-#SBATCH -o dsmc_2d_flow_%j.out
-##### Error file. This and the output file are the first two things we check when we are troubleshooting issues with your job.
-#SBATCH -e dsmc_2d_flow_%j.err
+#SBATCH -o dsmc_2d_flow.%j.out
 
 # Changes working directory to the directory where this script is submitted from
 printf 'Changing to the working directory: %s\n\n' "$SLURM_SUBMIT_DIR"
@@ -26,6 +24,7 @@ printf 'Loading modules\n'
 module load slurm
 module load mpich/ge/gcc/64/3.3.2
 module load cuda11.7/toolkit/11.7.1
+ulimit -S -c unlimited
 
 echo 'number of mpi ranks:' ${SLURM_NTASKS}
 # Determine the job host names and write a hosts file
