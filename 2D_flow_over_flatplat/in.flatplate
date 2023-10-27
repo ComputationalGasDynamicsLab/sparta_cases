@@ -1,0 +1,34 @@
+seed                 12345
+dimension            2
+global               gridcut 0.0016 comm/sort yes
+global               surfmax 10000
+
+boundary             o o p 
+create_box           -0.066 0.1132 -0.08 0.08 -0.5 0.5
+create_grid          224 200 1 
+#balance_grid         clump xyz
+balance_grid         block 1 * *
+
+global               nrho 3.72043e+20 fnum 1.19054e+13
+species              air.species N2 
+mixture              air N2 vstream 1503 0 0 temp 13.32
+
+read_surf            surf.flatplate clip
+surf_collide         wall diffuse 290 1
+surf_modify          all collide wall
+
+collide              vss air air.vss relax constant
+collide_modify       rotate smooth vibrate smooth 
+
+fix                  in emit/face air xlo ylo yhi 
+timestep             1.76263e-06
+
+stats		     5
+stats_style	     step cpu np nattempt ncoll nscoll nscheck
+
+dump                 1 image all 50 image.*.ppm type type pdiam 0.0002 &
+                     surf proc 0.001 size 1024 1024 zoom 8 &
+                     gline yes 0.001 
+dump_modify	     1 pad 4
+
+run                  10000
