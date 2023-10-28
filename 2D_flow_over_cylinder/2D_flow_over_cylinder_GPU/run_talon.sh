@@ -7,7 +7,7 @@
 ##### specify to use GPU partition
 #SBATCH --partition=talon-gpu32
 ##### use 2 GPUs
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:1
 ##### Number of tasks per node
 #SBATCH --ntasks-per-node=2
 #SBATCH --job-name=dsmc_2d_test
@@ -25,13 +25,14 @@ module load slurm
 module load mpich/ge/gcc/64/3.3.2
 module load cuda11.7/toolkit/11.7.1
 ulimit -S -c unlimited
+export SLURM_NTASKS=2
 
 echo 'number of mpi ranks:' ${SLURM_NTASKS}
 # Determine the job host names and write a hosts file
 srun -n $SLURM_NTASKS hostname | sort -u > $SLURM_JOB_ID.hosts
 
 # Run program using mpirun using GPU
-mpirun -np $SLURM_NTASKS ./spa_kokkos_talon -in in.circle -k on g 2 -sf kk
+mpirun -np $SLURM_NTASKS ./spa_kokkos_talon -in in.circle_grid_surf_dump -k on g 1 -sf kk
 
 # Remove Hosts file
 rm ${SLURM_JOB_ID}.hosts
