@@ -6,6 +6,10 @@ To convert SPARTA grid dump files to ParaView file, we need to do:
 ```
 pvpython grid2paraview.py grid_description.txt flow_result -r grid.*.data
 ```
+For this user can simply type the following command in terminal:
+```
+./grid_conversion.sh
+```
 
 The processing of surface dump files is similar.
 
