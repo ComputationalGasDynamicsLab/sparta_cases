@@ -35,7 +35,7 @@ compute              lambda lambda/grid f_mfp NULL N2 kx
 compute              flow grid all air n nrho u v w temp
 fix                  flow ave/grid all 1 ${Nsample} ${Nsample} c_flow[*]
 
-dump                 1 image all ${Namr} image.*.ppm type type pdiam 0.0001 &
+dump                 1 image all ${Namr} particle.*.ppm type type pdiam 0.0001 &
                      surf proc 0.002 size 1024 1024 zoom 8 &
                      gline no 0.0005 box yes 0.005
 dump_modify	     1 pad 4
