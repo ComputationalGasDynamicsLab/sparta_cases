@@ -2,6 +2,7 @@
 #PBS -N DSMC_flatplate
 #PBS -l select=1:ncpus=4
 #PBS -l walltime=0:10:00
+#PBS -q debug
 #PBS -A hypersonic01
 #PBS -l filesystems=home:grand:eagle
 
@@ -21,3 +22,5 @@ cd ${PBS_O_WORKDIR}
 mpiexec -n ${NTOTRANKS} --ppn ${NRANKS_PER_NODE} --depth=${NDEPTH} -env \
 OMP_NUM_THREADS=${NTHREADS} --cpu-bind depth ./set_affinity_gpu_polaris.sh \
 ./spa_polaris -in in.flatplate
+
+# note: refer to Polaris queue policy for node and time limit on each queue: https://docs.alcf.anl.gov/polaris/running-jobs/. 

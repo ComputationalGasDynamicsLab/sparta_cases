@@ -5,6 +5,7 @@ SPARTA test case fro 2D flow over flat plate.
  - `run_polaris.sh` is the job submission script for ALCF Polaris computer with GPU binary;
    - To submit job, use `qsub run_polaris.sh`.
    - `set_affinity_gpu_polaris.sh` file is needed to set the GPU affinity.
+   - currently, `debug` queue is used on Polaris. Different job queue may be used if more computing nodes are used.
  - job scripts are stored in the subfolder `run_scripts`.
 
 - To dump png file, use `in.circle` input file in the job script;
