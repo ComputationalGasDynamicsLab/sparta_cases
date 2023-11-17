@@ -20,8 +20,8 @@ cd $SLURM_SUBMIT_DIR
 printf 'Loading modules\n'
 module load slurm
 module load mpich/ge/gcc/64/3.3.2
-export num_mpi_ranks=$SLURM_NNODES * $SLURM_NTASKS_PER_NODE
-#export SLURM_NTASKS=$SLURM_NNODES * $SLURM_NTASKS_PER_NODE
+export num_mpi_ranks=$SLURM_NNODES*$SLURM_NTASKS_PER_NODE
+#export SLURM_NTASKS=$SLURM_NNODES*$SLURM_NTASKS_PER_NODE
 
 echo 'number of mpi ranks:' ${SLURM_NTASKS}
 echo 'number of node:' ${SLURM_NNODES}
