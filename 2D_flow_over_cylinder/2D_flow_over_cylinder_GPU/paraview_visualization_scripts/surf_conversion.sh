@@ -1,1 +1,1 @@
-pvpython surf2paraview.py grid_description.txt flow_result_surface -r ../circle_grid/surface.*.data
+pvpython surf2paraview.py ../data.circle flow_result_surface -r ../surface.*.data

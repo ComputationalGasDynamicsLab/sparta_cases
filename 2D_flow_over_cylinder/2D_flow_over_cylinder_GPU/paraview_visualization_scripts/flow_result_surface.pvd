@@ -4,6 +4,6 @@
                compressor="vtkZLibDataCompressor">
    <Collection>    
     <DataSet timestep="0" group="" part="0"   
-             file="flow_result/flow_result_0.pvtu"/>
+             file="flow_result_surface/flow_result_surface_0.vtu"/>
    </Collection>    
 </VTKFile>    

@@ -17,6 +17,6 @@
 <PPoints>
 <PDataArray type="Float32" Name="Points" NumberOfComponents="3"/>
 </PPoints>
-<Piece Source="flow_result_grid_0_0.vtu"/>
+<Piece Source="./flow_result_grid_0_0.vtu"/>
 </PUnstructuredGrid>
 </VTKFile>
