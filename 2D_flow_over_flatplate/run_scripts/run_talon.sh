@@ -6,7 +6,6 @@
 #SBATCH --nodes=1
 ##### Number of tasks per node
 #SBATCH --ntasks-per-node=4
-##SBATCH --ntasks=4
 #SBATCH --job-name=dsmc_2d_test
 #SBATCH --chdir=./
 ##### Output file. Error is also output in the same file
@@ -20,13 +19,11 @@ cd $SLURM_SUBMIT_DIR
 printf 'Loading modules\n'
 module load slurm
 module load mpich/ge/gcc/64/3.3.2
-export num_mpi_ranks=$SLURM_NNODES*$SLURM_NTASKS_PER_NODE
-#export SLURM_NTASKS=$SLURM_NNODES*$SLURM_NTASKS_PER_NODE
+num_mpi_ranks=$(( SLURM_NNODES * $SLURM_NTASKS_PER_NODE ))
 
-echo 'number of mpi ranks:' ${SLURM_NTASKS}
 echo 'number of node:' ${SLURM_NNODES}
 echo 'number of tasks per node:' ${SLURM_NTASKS_PER_NODE}
+echo 'number of mpi ranks:' ${num_mpi_ranks}
 
 # Run program using mpirun
-#mpirun -np $SLURM_NTASKS ./spa_talon -in in.flatplate
 mpirun -np $num_mpi_ranks ./spa_talon -in in.flatplate
