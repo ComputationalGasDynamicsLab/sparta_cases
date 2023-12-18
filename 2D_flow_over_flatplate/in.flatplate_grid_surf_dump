@@ -1,0 +1,73 @@
+seed                 12345
+dimension            2
+global               gridcut 0.0016 comm/sort yes
+global               surfmax 10000
+
+boundary             o o p 
+create_box           -0.066 0.1132 -0.08 0.08 -0.5 0.5
+create_grid          224 200 1 
+#balance_grid         clump xyz
+balance_grid         block 1 * *
+
+global               nrho 3.72043e+20 fnum 1.19054e+13
+species              air.species N2 
+mixture              air N2 vstream 1503 0 0 temp 13.32
+
+read_surf            surf.flatplate clip
+surf_collide         wall diffuse 290 1
+surf_modify          all collide wall
+
+collide              vss air air.vss relax constant
+collide_modify       rotate smooth vibrate smooth 
+
+fix                  in emit/face air xlo ylo yhi 
+timestep             1.76263e-06
+
+variable             Nsample equal 10000
+variable             Namr equal 20000
+variable             nstep equal 40000
+variable             rmfp equal 2.0
+variable             cmfp equal 4.0
+compute              mfp grid all air nrho
+fix                  mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
+compute              lambda lambda/grid f_mfp NULL N2 kx
+
+# compute and fix for flow field properties
+compute             1 grid all air n nrho u v w temp trot tvib
+fix                 1 ave/grid all 1 ${Nsample} ${Nsample} c_1[*]
+# compute and fix for surf properties
+compute             2 surf all air n nflux nflux_incident mflux mflux_incident &
+                    press ke erot evib etot
+fix                 2 ave/surf all 1 ${Nsample} ${Nsample} c_2[*]
+
+dump                1 grid all ${Namr} grid.*.data id f_1[*]
+dump_modify	    1 pad 4
+dump                2 surf all ${Namr} surface.*.data id f_2[*]
+dump_modify	    2 pad 4
+
+stats		     5
+stats_style	     step cpu np nattempt ncoll nscoll nscheck
+restart              ${Namr} flat_plate.restart
+
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${nstep}
