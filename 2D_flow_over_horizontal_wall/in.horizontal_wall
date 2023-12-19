@@ -20,9 +20,9 @@ collide_modify       rotate smooth vibrate smooth
 fix                  in emit/face ar xlo ylo yhi 
 timestep             2.0e-06
 
-variable             Nsample equal 1000
-variable             Namr equal 2000
-variable             nstep equal 4000
+variable             Nsample equal 5000
+variable             Namr equal 10000
+variable             nstep equal 20000
 variable             rmfp equal 2.0
 variable             cmfp equal 4.0
 compute              mfp grid all ar nrho
