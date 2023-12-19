@@ -1,7 +1,7 @@
 #!/bin/bash
 ##### Partition to use
-#SBATCH --partition=talon-short
-#SBATCH -t 0:30:00
+#SBATCH --partition=talon
+#SBATCH -t 2:30:00
 ##### Number of nodes
 #SBATCH --nodes=1
 ##### Number of tasks per node
