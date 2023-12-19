@@ -30,7 +30,7 @@ fix                  mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
 compute              lambda lambda/grid f_mfp NULL Ar kx
 
 # compute and fix for flow field properties
-compute             1 grid all ar n nrho u v w temp trot tvib
+compute             1 grid all ar n nrho massrho u v w temp trot tvib
 fix                 1 ave/grid all 1 ${Nsample} ${Nsample} c_1[*]
 # compute and fix for surf properties
 compute             2 boundary ar n nflux press ke erot evib etot
