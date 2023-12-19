@@ -2,8 +2,8 @@ seed                 12345
 dimension            2
 global               gridcut 0.016 comm/sort yes
 
-boundary             o o p 
-create_box           0.0 1.0 0.8 -0.5 0.5
+boundary             o so p 
+create_box           0.0 1.0 0.0 0.8 -0.5 0.5
 create_grid          250 200 1 
 balance_grid         block 1 * *
 
@@ -12,17 +12,17 @@ species              ar.species Ar
 mixture              ar Ar vstream 2793.8 0 0 temp 100.0
 
 surf_collide         wall diffuse 300 1
-surf_modify          all collide wall
+bound_modify         ylo collide wall
 
-collide              vhs ar ar.vss relax constant
+collide              vss ar ar.vhs relax constant
 collide_modify       rotate smooth vibrate smooth 
 
 fix                  in emit/face ar xlo ylo yhi 
 timestep             2.0e-06
 
-variable             Nsample equal 10000
-variable             Namr equal 20000
-variable             nstep equal 40000
+variable             Nsample equal 1000
+variable             Namr equal 2000
+variable             nstep equal 4000
 variable             rmfp equal 2.0
 variable             cmfp equal 4.0
 compute              mfp grid all ar nrho
@@ -33,14 +33,12 @@ compute              lambda lambda/grid f_mfp NULL Ar kx
 compute             1 grid all ar n nrho u v w temp trot tvib
 fix                 1 ave/grid all 1 ${Nsample} ${Nsample} c_1[*]
 # compute and fix for surf properties
-compute             2 surf all ar n nflux nflux_incident mflux mflux_incident &
-                    press ke erot evib etot
-fix                 2 ave/surf all 1 ${Nsample} ${Nsample} c_2[*]
+compute             2 boundary ar n nflux press ke erot evib etot
+fix                 2 ave/time 1 ${Nsample} ${Nsample} c_2[*] mode vector &
+                    file wall_surface.data
 
 dump                1 grid all ${Namr} grid.*.data id f_1[*]
 dump_modify	    1 pad 4
-dump                2 surf all ${Namr} surface.*.data id f_2[*]
-dump_modify	    2 pad 4
 
 stats		     5
 stats_style	     step cpu np nattempt ncoll nscoll nscheck
