@@ -1,0 +1,10 @@
+*.sparta
+*.log
+*.sh
+*.log
+*.out
+../2D_flow_over_cylinder_CPU/spa_kokkos_talon
+spa_kokkos_talon
+../../2D_flow_over_flatplate/spa_kokkos_talon
+../../2D_flow_over_horizontal_wall/dsmc_2d_flow_9375.out
+../../2D_flow_over_horizontal_wall/spa_kokkos_talon
