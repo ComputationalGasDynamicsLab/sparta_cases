@@ -27,4 +27,5 @@ echo 'number of tasks per node:' ${SLURM_NTASKS_PER_NODE}
 echo 'number of mpi ranks:' ${num_mpi_ranks}
 
 # Run program using mpirun
-mpirun -np $num_mpi_ranks ./spa_talon -in in.circle
+# dump surface and grid data files to be processed in ParaView
+mpirun -np $num_mpi_ranks ./spa_talon -in in.circle_grid_surf_dump
