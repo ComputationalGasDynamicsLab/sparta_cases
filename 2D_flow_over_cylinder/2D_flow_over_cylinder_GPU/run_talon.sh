@@ -1,18 +1,17 @@
 #!/bin/bash
-##### Partition to use
-#SBATCH --partition=talon
-#SBATCH -t 1:00:00
-##### Number of nodes
-#SBATCH --nodes=1
 ##### specify to use GPU partition
 #SBATCH --partition=talon-gpu32
-##### use 2 GPUs
+#SBATCH -t 2:00:00
+##### Number of nodes
+#SBATCH --nodes=1
+##### use 1 GPU
 #SBATCH --gres=gpu:1
 ##### Number of tasks per node
-#SBATCH --ntasks-per-node=2
-#SBATCH --job-name=dsmc_2d_test
+##### use 1 CPU
+#SBATCH --ntasks-per-node=1
+#SBATCH --job-name=dsmc_cylinder
 #SBATCH --chdir=./
-##### Output file. This and the error file are the first two things we check when we are troubleshooting issues with your job. 
+##### Output file.
 #SBATCH -o dsmc_2d_flow.%j.out
 
 # Changes working directory to the directory where this script is submitted from
@@ -25,14 +24,13 @@ module load slurm
 module load mpich/ge/gcc/64/3.3.2
 module load cuda11.7/toolkit/11.7.1
 ulimit -S -c unlimited
-export SLURM_NTASKS=2
+num_mpi_ranks=$(( SLURM_NNODES * $SLURM_NTASKS_PER_NODE ))
 
-echo 'number of mpi ranks:' ${SLURM_NTASKS}
-# Determine the job host names and write a hosts file
-srun -n $SLURM_NTASKS hostname | sort -u > $SLURM_JOB_ID.hosts
+echo 'number of node:' ${SLURM_NNODES}
+echo 'number of tasks per node:' ${SLURM_NTASKS_PER_NODE}
+echo 'number of mpi ranks:' ${num_mpi_ranks}
 
-# Run program using mpirun using GPU
-mpirun -np $SLURM_NTASKS ./spa_kokkos_talon -in in.circle_grid_surf_dump -k on g 1 -sf kk
+# Run program using mpirun and with GPU
+mpirun -np $num_mpi_ranks ./spa_kokkos_talon -in in.circle_grid_surf_dump -k on g 1 -sf kk
 
-# Remove Hosts file
-rm ${SLURM_JOB_ID}.hosts
+### Note: currently only uses 1 CPU and 1 GPU due to crash when multiple CPUs are used. 
