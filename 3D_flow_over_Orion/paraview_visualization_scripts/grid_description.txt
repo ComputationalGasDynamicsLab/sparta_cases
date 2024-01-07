@@ -1,0 +1,3 @@
+dimension           3
+create_box          -6.5 8.5 -5 5 -5 5
+create_grid         30 20 20 
