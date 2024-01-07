@@ -1,0 +1,95 @@
+# 3D flow over Orion at 105km altitude atomosphere conditions
+
+seed                12345
+dimension           3
+global              gridcut 1 comm/sort yes
+global              gridcut 1.0 comm/sort yes
+global              surfmax 10000
+boundary            o o o 
+
+create_box          -6.5 8.5 -5 5 -5 5
+create_grid         30 20 20 
+balance_grid        rcb cell
+
+global              nrho 5.09851e+18 fnum 6.373e+16
+global              weight cell volume
+species             air.species O2 N2 O 
+mixture             air O2 N2 O vstream 6830.83 3331.62 0 temp 208
+mixture             air O2 frac 0.158078
+mixture             air N2 frac 0.78319195
+mixture             air O 
+
+read_surf           sdata.orion scale 1 1 1 clip
+surf_collide        1 diffuse 1029 1.0
+surf_modify         all collide 1
+collide             vss air air.vss relax constant
+# below relax variable is causing crash
+#collide             vss air air.vss relax variable
+collide_modify      rotate smooth vibrate smooth 
+
+fix                 in emit/face air xlo ylo 
+timestep            6.0e-06
+
+variable            Nsample equal 2500
+variable            Namr equal 5000
+variable            Ndump equal 5000
+variable            Nstep equal 10000
+variable            Nstats equal 5
+
+variable            rmfp equal 0.5
+variable            cmfp equal 1.0
+# compute and fix for adaptive mesh refinement
+compute             mfp grid all air nrho
+fix                 mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
+compute             lambda lambda/grid f_mfp NULL N2 kx
+
+# compute and fix for flow field properties
+compute             1 grid all air n massrho nrho u v w trot tvib
+compute             2 thermal/grid all air temp press
+fix                 1 ave/grid all 1 ${Nsample} ${Nsample} c_1[*] c_2[*]
+# compute and fix for surf properties
+compute             3 surf all air n nflux nflux_incident mflux mflux_incident &
+                    press ke erot evib etot
+fix                 2 ave/surf all 1 ${Nsample} ${Nsample} c_3[*]
+
+dump                1 grid all ${Ndump} grid.*.data id f_1[*]
+dump_modify         1 pad 4
+dump                2 surf all ${Ndump} surface.*.data id f_2[*]
+dump_modify         2 pad 4
+
+# compute and fix for status output
+compute             surf_force surf all air fx fy fz
+fix                 forceStat ave/surf all 1 ${Nstats} ${Nstats} c_surf_force[*]
+compute             tot_surf_force reduce sum f_forceStat[1] f_forceStat[2] f_forceStat[3]
+stats               ${Nstats}
+stats_style         step cpu np nattempt ncoll nscoll nscheck & 
+                    c_tot_surf_force[1] c_tot_surf_force[2] c_tot_surf_force[3]
+restart             ${Namr} Orion.restart
+
+variable            rmfp equal 0.5
+variable            cmfp equal 1.0
+
+# adapt the grid around the surface before running the simulation
+adapt_grid          all refine surf all 0.00001 iterate 5
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Namr}
+adapt_grid          all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                    combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid        rcb cell
+
+run                 ${Nstep}
