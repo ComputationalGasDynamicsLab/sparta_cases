@@ -12,7 +12,7 @@ create_grid         30 20 20
 balance_grid        rcb cell
 
 global              nrho 5.09851e+18 fnum 6.373e+16
-global              weight cell volume
+#global              weight cell volume
 species             air.species O2 N2 O 
 mixture             air O2 N2 O vstream 6830.83 3331.62 0 temp 208
 mixture             air O2 frac 0.158078
