@@ -66,9 +66,6 @@ stats_style         step cpu np nattempt ncoll nscoll nscheck &
                     c_tot_surf_force[1] c_tot_surf_force[2] c_tot_surf_force[3]
 restart             ${Namr} Orion.restart
 
-variable            rmfp equal 0.5
-variable            cmfp equal 1.0
-
 # adapt the grid around the surface before running the simulation
 adapt_grid          all refine surf all 0.00001 iterate 5
 
