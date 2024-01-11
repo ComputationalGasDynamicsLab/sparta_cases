@@ -42,6 +42,7 @@ variable            Vinf equal ${mach}*${uspeed}
 variable            Vinf equal 7600
 variable            Vx equal ${Vinf}*cos(${alpha}*2*PI/360)
 variable            Vy equal ${Vinf}*sin(${alpha}*2*PI/360)
+variable            pressure equal ${nrho}*${boltz}*${Tinf}
 
 variable            cbar equal sqrt(8.*${boltz}*${Tinf}/${mass}/${pi})
 variable            mfp equal 2*${mue}/(${rho}*${cbar})
@@ -52,14 +53,14 @@ variable            xratio equal ${deltax}/${mfp}
 # Print variable values to log file
 ###################################
 print               " ############################ "
-print               " Simulation parameters"
-print               " Density  = ${rho}"
-print               " mean free path  = ${mfp}"
-print               " cells size / free stream mean free path = ${xratio}"
+print               " free stream flow density = ${rho}"
 print               " sound speed  = ${uspeed}"
 print               " free stream flow speed = ${Vinf}"
 print               " free stream flow vx = ${Vx}"
 print               " free stream flow vy = ${Vy}"
+print               " free stream flow Pressure = ${pressure}"
+print               " mean free path  = ${mfp}"
+print               " cells size / free stream mean free path = ${xratio}"
 print               " Simulation particle weight = ${wp}"
 print               " ############################ "
 
