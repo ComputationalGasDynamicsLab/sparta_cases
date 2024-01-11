@@ -1,5 +1,71 @@
 # 3D flow over Orion at 105km altitude atomosphere conditions
 
+###################################
+# below segment of input to calculate simulation parameters are adapted
+# from SPARTA example case examples/cylinder:
+# https://github.com/sparta/sparta/tree/master/examples/cylinder
+###################################
+###################################
+# Constants and Gas parameters (N2)
+###################################
+variable            boltz equal 1.380658E-23
+variable            mass equal 4.65E-26
+variable            gamma equal 1.400
+variable            pi equal 3.14159
+# N2 viscosity at 208K
+variable            mue equal 1.333E-5
+
+###################################
+# Trajectory inputs
+###################################
+variable            mach equal 25.0
+variable            nrho equal 5.09851e+18
+variable            Tinf equal 208.0
+# alpha: angle of attack
+variable            alpha equal 26.000
+variable            Twall equal 1029.0
+
+###################################
+# Simulation initialization standards
+###################################
+variable            ppc equal 10
+variable            deltax equal 0.5
+variable            deltay equal 0.5
+variable            deltaz equal 0.5
+
+###################################
+# Parameter calculations
+###################################
+variable            rho equal ${nrho}*${mass}
+variable            uspeed equal sqrt(${gamma}*${boltz}*${Tinf}/${mass})
+variable            Vinf equal ${mach}*${uspeed}
+variable            Vinf equal 7600
+variable            Vx equal ${Vinf}*cos(${alpha}*2*PI/360)
+variable            Vy equal ${Vinf}*sin(${alpha}*2*PI/360)
+
+variable            cbar equal sqrt(8.*${boltz}*${Tinf}/${mass}/${pi})
+variable            mfp equal 2*${mue}/(${rho}*${cbar})
+variable            wp equal ${nrho}*${deltax}*${deltay}*${deltaz}/${ppc}
+variable            xratio equal ${deltax}/${mfp}
+
+###################################
+# Print variable values to log file
+###################################
+print               " ############################ "
+print               " Simulation parameters"
+print               " Density  = ${rho}"
+print               " mean free path  = ${mfp}"
+print               " cells size / free stream mean free path = ${xratio}"
+print               " sound speed  = ${uspeed}"
+print               " free stream flow speed = ${Vinf}"
+print               " free stream flow vx = ${Vx}"
+print               " free stream flow vy = ${Vy}"
+print               " Simulation particle weight = ${wp}"
+print               " ############################ "
+
+###################################
+# Simulation parameters
+###################################
 seed                12345
 dimension           3
 global              gridcut 1 comm/sort yes
@@ -14,13 +80,13 @@ balance_grid        rcb cell
 global              nrho 5.09851e+18 fnum 6.373e+16
 #global              weight cell volume
 species             air.species O2 N2 O 
-mixture             air O2 N2 O vstream 6830.83 3331.62 0 temp 208
+mixture             air O2 N2 O vstream 6830.83 3331.62 0 temp ${Tinf}
 mixture             air O2 frac 0.158078
 mixture             air N2 frac 0.78319195
 mixture             air O 
 
 read_surf           sdata.orion scale 1 1 1 clip
-surf_collide        1 diffuse 1029 1.0
+surf_collide        1 diffuse ${Twall} 1.0
 surf_modify         all collide 1
 collide             vss air air.vss relax constant
 # below relax variable is causing crash
@@ -60,16 +126,16 @@ dump_modify         2 pad 4
 # dump result images
 dump                3 image all ${Ndump} mesh_rho_surface.*.png type type particle no pdiam 0.0005 &
                     surf one 0.01 size 4096 4096 zoom 2.0 &
-                    gline yes 0.002 box no 0.005 &
+                    gline no 0.002 box no 0.005 &
                     gridz 0.0 f_1[2] view 60 240
 dump_modify         3 pad 4
 dump                4 image all ${Ndump} mesh_rho_press.*.png type type particle no pdiam 0.0005 &
                     surf f_2[6] 0.01 size 4096 4096 zoom 2.0 &
-                    gline yes 0.002 box no 0.005 &
+                    gline no 0.002 box no 0.005 &
                     gridz 0.0 f_1[2] view 60 240
 dump_modify         4 pad 4 &
                     cmap gridz 1.0e-10 1.0e-5 cf 0.0 2 min blue max red &
-                    cmap surf 1.0e-5 1.0 cf 0.0 2 min blue max red
+                    cmap surf 1.0e-5 10.0 cf 0.0 2 min blue max red
 
 # compute and fix for status output
 compute             surf_force surf all air fx fy fz
