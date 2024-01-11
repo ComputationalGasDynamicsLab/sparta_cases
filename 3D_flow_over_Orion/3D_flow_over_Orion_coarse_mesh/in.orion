@@ -136,7 +136,7 @@ dump_modify         3 pad 4 &
 dump                4 image all ${Ndump} mesh_rho_press.*.png type type particle no pdiam 0.0005 &
                     surf f_2[6] 0.01 size 4096 4096 zoom 2.0 &
                     gline yes 0.002 box no 0.005 &
-                    gridz 0.0 f_1[2] view 150 244 &
+                    gridz 0.0 f_1[2] view 150 260 &
 #                    axes yes 0.1 0.01
 dump_modify         4 pad 4 &
                     cmap gridz 2.0e-7 1.0e-5 cf 0.0 2 min blue max red &
