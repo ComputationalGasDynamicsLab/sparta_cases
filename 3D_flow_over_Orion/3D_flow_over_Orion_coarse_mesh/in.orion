@@ -135,8 +135,8 @@ dump                4 image all ${Ndump} mesh_rho_press.*.png type type particle
                     gline no 0.002 box no 0.005 &
                     gridz 0.0 f_1[2] view 60 240
 dump_modify         4 pad 4 &
-                    cmap gridz 1.0e-10 1.0e-5 cf 0.0 2 min blue max red &
-                    cmap surf 1.0e-5 10.0 cf 0.0 2 min blue max red
+                    cmap gridz 2.0e-7 1.0e-5 cf 0.0 2 min blue max red &
+                    cmap surf 1.0e-2 1.0 cf 0.0 2 min blue max red
 
 # compute and fix for status output
 compute             surf_force surf all air fx fy fz
