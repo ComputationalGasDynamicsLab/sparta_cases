@@ -52,10 +52,17 @@ compute             3 surf all air n nflux nflux_incident mflux mflux_incident &
                     press ke erot evib etot
 fix                 2 ave/surf all 1 ${Nsample} ${Nsample} c_3[*]
 
+# dump grid and surface results to files
 dump                1 grid all ${Ndump} grid.*.data id f_1[*]
 dump_modify         1 pad 4
 dump                2 surf all ${Ndump} surface.*.data id f_2[*]
 dump_modify         2 pad 4
+# dump result images
+dump                3 image all ${Ndump} mesh.*.png type type particle no pdiam 0.0005 &
+                    surf one 0.01 size 1024 1024 zoom 2.0 &
+                    gline yes 0.0015 box no 0.005 &
+                    gridz 0.0 f_1[1] view 60 240
+dump_modify         3 pad 4
 
 # compute and fix for status output
 compute             surf_force surf all air fx fy fz
