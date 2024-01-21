@@ -1,5 +1,5 @@
 import re
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import json
 
 import pandas as pd
@@ -50,18 +50,27 @@ for i in headers:
 for line in data:
     for index, header in enumerate(headers): #probably should refactor
         d[header].append(line[index])
+def usage(): 
+    print("\n\t\t----USAGE---\n\npython stats.py dsmc.12321.out [csv, json, txt, all or plot]\n")
 
-with open("stats.txt", "w") as txt_file:
-    
-    txt_file.write(" ".join(headers) +"\n")
-    for line in data:
-        txt_file.write(" ".join(line) + "\n")
+if len(sys.argv) > 2:
+    match sys.argv[2]:
+        case "txt":
+            with open("stats.txt", "w") as txt_file:
+                txt_file.write(" ".join(headers) +"\n")
+                for line in data:
+                    txt_file.write(" ".join(line) + "\n")
+        case "json":
+            with open('stats.json', 'w') as f:
+                json.dump(d, f)
+        case "csv":
+            frame = pd.read_csv("stats.txt")
+            frame.to_csv("stats.csv", index = None) 
 
-with open('stats.json', 'w') as f:
-    json.dump(d, f)
-
-
-frame = pd.read_csv("stats.txt")
-frame.to_csv("stats.csv", index = None) 
-#plt.plot(d["Step"], d["CPU"])
-#plt.show()
+        case "plot":
+            plt.plot(d["Step"], d["CPU"])
+            plt.show()
+        case _:
+            usage()
+else:
+    usage()
