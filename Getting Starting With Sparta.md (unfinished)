@@ -13,12 +13,23 @@ This is where you will be primarily running commands for the simulations.
 Do not run the simulation on the head node, always run the simulations by using the "sbatch" command. Only running  small scripts that simply install software or other linux add-ons are acceptable to run on the head node.
 
 
-1. Download Sparta and extract it in your home directory.
-Download link: https://sjplimp.github.io//tars/sparta.tar.gz
+1. Installing Sparta.
+Sparta Download link: https://sjplimp.github.io//tars/sparta.tar.gz
 Sparta Homepage Directory: https://sparta.github.io/
+Sparta Build Scripts: https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts
+run the commands as follows:
 
-run the command as follows:
+```
 cd ~
+wget https://github.com/ComputationalGasDynamicsLab/sparta_cases/tree/Jalen3/install_sparta.sh
+chmod +x install_sparta.sh && ./install_sparta.sh
 wget https://sjplimp.github.io//tars/sparta.tar.gz .
-tar -xzf sparta.tar.gz
-rm -rf sparta.tar.gz
+mkdir sparta_root && tar -xzf sparta.tar.gz -C sparta_root --strip-components 1
+mkdir ~/sparta_root/build_cpu && mkdir ~/sparta_root/build_gpu
+wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta.sh -o ~/sparta_root/build_cpu/build_sparta.sh
+wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta_kokkos.sh ~/sparta_root/build_gpu/build_sparta_kokkos.sh
+chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmox +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
+cd ~/sparta_root/build_cpu && ./build_sparta.sh && cd ../build_gpu && ./build_sparta_kkokos.sh
+
+cd ~ && rm -rf sparta.tar.gz
+```
