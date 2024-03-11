@@ -30,7 +30,7 @@ mkdir ~/sparta_root/build_cpu && mkdir ~/sparta_root/build_gpu
 #had issues using Wget
 #wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta.sh -o ~/sparta_root/build_cpu/build_sparta.sh
 #wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta_kokkos.sh ~/sparta_root/build_gpu/build_sparta_kokkos.sh
-#chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmox +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
+#chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmod +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
 
 cd ~/sparta_root/build_cpu  
 # load required modules
@@ -123,4 +123,23 @@ or
 
 ```
 squeue -u your_und.username
+
+To convert the output into a format readable by Paraview. You must install the paraview tool kit. Run the commands as follows/
+
 ```
+cd ~
+wget -O p.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.12&type=binary&os=Linux&downloadFile=ParaView-5.12.0-egl-MPI-Linux-Python3.10-x86_64.tar.gz"
+mkdir Paraview && tar -xzf p.tar.gz -C Paraview --strip-components 1
+echo "export PATH=$PATH:~/ParaView/bin" >> .bashrc
+```
+Once the simulation is finished, you to post process you need to run the pvpython scripts in the paraview_initialization_scripts folder
+![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/132db81b-21f0-4a76-9b10-ecb8b605ef99)
+
+Run the commands on the head node. These are fine because they are not computationally intensive.
+```
+./grid_conversion.sh
+./surf_conversion.sh
+```
+Under the Talon Dashboard start a Paraview session under the GPU cores.
+![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/649461c8-61cd-4b59-bb17-dbcd68f36260)
+
