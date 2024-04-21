@@ -78,7 +78,10 @@ wget -O p.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submi
 mkdir Paraview && tar -xzf p.tar.gz -C Paraview --strip-components 1
 echo "export PATH=$PATH:~/ParaView/bin" >> .bashrc
 ```
-Once the simulation is finished, to post process you need to run the pvpython scripts in the paraview_initialization_scripts folder
+Once the simulation is finished, to post process you need to run the pvpython scripts in the paraview_initialization_scripts folder in your case file.
+
+
+The internal contents of the folder should look similar to this.
 ![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/132db81b-21f0-4a76-9b10-ecb8b605ef99)
 
 Run the commands on the head node. These are fine because they are not computationally intensive.
