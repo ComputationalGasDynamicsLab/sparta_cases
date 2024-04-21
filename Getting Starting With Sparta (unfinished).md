@@ -23,24 +23,11 @@ copy and paste the commands as follows:
 cd ~
 wget "https://github.com/ComputationalGasDynamicsLab/sparta_cases/tree/Jalen3/install_sparta.sh"
 chmod +x install_sparta.sh && ./install_sparta.sh
-cd ~
-wget "https://sjplimp.github.io//tars/sparta.tar.gz" .
-mkdir sparta_root && tar -xzf sparta.tar.gz -C sparta_root --strip-components 1
-mkdir ~/sparta_root/build_cpu && mkdir ~/sparta_root/build_gpu
-#had issues using Wget
-wget "https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta.sh" -o ~/sparta_root/build_cpu/build_sparta.sh
-wget "https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta_kokkos.sh" ~/sparta_root/build_gpu/build_sparta_kokkos.sh
-chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmod +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
 
-cd ~/sparta_root/build_cpu  
-
-cd ~ && rm -rf sparta.tar.gz
 ```
 To get example sparta case files, download them from the git repository. 
-
 ```
-cd ~ && mkdir DSMC && cd DSMC
-git clone https://github.com/ComputationalGasDynamicsLab/sparta_cases
+cd ~ && mkdir DSMC && cd DSMC && git clone https://github.com/ComputationalGasDynamicsLab/sparta_cases
 ```
 Running the simulation:
 
@@ -82,7 +69,8 @@ Once the simulation is finished, to post process you need to run the pvpython sc
 
 
 The internal contents of the folder should look similar to this.
-![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/132db81b-21f0-4a76-9b10-ecb8b605ef99)
+![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/e91fcf99-8204-40d7-8101-439681431394)
+
 
 Run the commands on the head node. These are fine because they are not computationally intensive.
 ```
@@ -90,5 +78,6 @@ Run the commands on the head node. These are fine because they are not computati
 ./surf_conversion.sh
 ```
 Under the Talon Dashboard start a Paraview session under the GPU cores.
+
 ![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/649461c8-61cd-4b59-bb17-dbcd68f36260)
 
