@@ -1,7 +1,7 @@
 #!/bin/bash
 ##### specify to use GPU partition
 #SBATCH --partition=talon-gpu32
-#SBATCH -t 2:00:00
+#SBATCH -t 3:00:00
 ##### Number of nodes
 #SBATCH --nodes=1
 ##### use 1 GPU

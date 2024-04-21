@@ -4,7 +4,7 @@ import json
 
 import pandas as pd
 import sys
-
+import pdb
 #This script requires a .out file from sparta. The format must require that "Step" be the first header.
 #Loop must be the last word of the last line between the data
 
@@ -16,6 +16,12 @@ import sys
     Loop time of 827.552 on 1 procs for 20000 steps with 70225 particles
         
 """
+def usage():
+
+    print("\n\t\t----USAGE---\n\npython stats.py dsmc.12321.out [csv, json, txt, all or plot]\n")
+if len(sys.argv) < 2:
+    usage()
+    exit()
 f = sys.argv[1]
 doc = open(f, "r") # open a document
 lines = doc.readlines()
@@ -33,6 +39,7 @@ for index, line in enumerate(lines, 1):
     elif re.search("Loop", line): #upper bound
         data_ranges[i][1] = index
         i += 1
+#NOTE: I understand that these two loops are redundant and can be done in one go.
 #append everything between the upper and lower bounds
 for index, line in enumerate(lines, 1):
     for bound in data_ranges:
@@ -41,36 +48,39 @@ for index, line in enumerate(lines, 1):
 
 doc.close()     
 #create a dictionary
-d = {}
+dict1 = {}
 #create keys
 for i in headers:
-    d[i] = []
+    dict1[i] = []
 #assign each key to the corresponding data
 #i.e Step Np Nscoll .... 
 for line in data:
     for index, header in enumerate(headers): #probably should refactor
-        d[header].append(line[index])
-def usage(): 
-    print("\n\t\t----USAGE---\n\npython stats.py dsmc.12321.out [csv, json, txt, all or plot]\n")
-
+        dict1[header].append(line[index])
 if len(sys.argv) > 2:
-    match sys.argv[2]:
-        case "txt":
-            with open("stats.txt", "w") as txt_file:
-                txt_file.write(" ".join(headers) +"\n")
-                for line in data:
-                    txt_file.write(" ".join(line) + "\n")
-        case "json":
-            with open('stats.json', 'w') as f:
-                json.dump(d, f)
-        case "csv":
-            frame = pd.read_csv("stats.txt")
-            frame.to_csv("stats.csv", index = None) 
-
-        case "plot":
-            plt.plot(d["Step"], d["CPU"])
-            plt.show()
-        case _:
-            usage()
+    file_output = sys.argv[2].lower()
+    frame = pd.DataFrame.from_dict(dict1)
+    if file_output == "txt":     
+        print("Saved as stats.txt")
+        with open("stats.txt", "w") as txt_file:
+            txt_file.write(" ".join(headers) +"\n")
+            for line in data:
+                txt_file.write(" ".join(line) + "\n")
+    elif file_output == "json":
+        print("Saved to stats.json")
+        with open('stats.json', 'w') as f:
+            json.dump(d, f)
+    elif file_output == "csv":
+        print("Saved as stats.csv")
+        frame.to_csv("stats.csv") 
+    elif file_output == "plot":
+        print(f"Saving as figure. Writing {len(dict1['Step'])} lines. Please wait.")
+        
+        plt.plot(dict1["Step"], dict1["CPU"])
+        plt.savefig("step cpu")
+    else:
+        usage()
 else:
     usage()
+
+

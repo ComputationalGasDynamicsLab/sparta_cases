@@ -7,7 +7,7 @@ global              gridcut 0.0 comm/sort yes
 boundary	    o o p
 
 create_box  	    -0.1 0.1 -0.1 0.1 -0.5 0.5
-create_grid 	    50 50 1
+create_grid 	    200 200 1
 balance_grid        rcb cell
 
 global              nrho 1.0e+20 fnum 1.0e+19
@@ -46,10 +46,30 @@ compute             2 surf all air n nflux nflux_incident mflux mflux_incident &
 fix                 2 ave/surf all 1 ${Nsample} ${Nsample} c_2[*]
 
 
+# compute and fix for flow field properties
+compute             flow grid all air n nrho u v w temp
+fix                 flow ave/grid all 1 ${Nsample} ${Nsample} c_flow[*]
+
 dump                1 grid all ${Namr} grid.*.data id f_1[*]
 dump_modify	    1 pad 4
 dump                2 surf all ${Namr} surface.*.data id f_2[*]
 dump_modify	    2 pad 4
+
+dump                3 image all ${Namr} mesh.*.png type type particle no pdiam 0.0005 &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    gline yes 0.0015 box yes 0.005
+dump_modify         3 pad 4
+
+dump                4 image all ${Namr} particle.*.png type type particle yes pdiam 0.0005 &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    box yes 0.005
+
+dump_modify         4 pad 4
+
+dump                5 image all ${Namr} flow_vx.*.png type type particle no grid f_flow[2] &
+                    surf one 0.01 size 1024 1024 zoom 8.0 &
+                    box yes 0.005
+dump_modify         5 pad 4
 
 stats		    5
 stats_style	    step cpu np nattempt ncoll nscoll nscheck
