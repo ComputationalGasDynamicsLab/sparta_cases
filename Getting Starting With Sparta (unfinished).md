@@ -20,75 +20,19 @@ Sparta Build Scripts: https://github.com/ComputationalGasDynamicsLab/sparta_buil
 copy and paste the commands as follows:
 
 ```
-#cd ~
-#wget https://github.com/ComputationalGasDynamicsLab/sparta_cases/tree/Jalen3/install_sparta.sh
-#chmod +x install_sparta.sh && ./install_sparta.sh
 cd ~
-wget https://sjplimp.github.io//tars/sparta.tar.gz .
+wget "https://github.com/ComputationalGasDynamicsLab/sparta_cases/tree/Jalen3/install_sparta.sh"
+chmod +x install_sparta.sh && ./install_sparta.sh
+cd ~
+wget "https://sjplimp.github.io//tars/sparta.tar.gz" .
 mkdir sparta_root && tar -xzf sparta.tar.gz -C sparta_root --strip-components 1
 mkdir ~/sparta_root/build_cpu && mkdir ~/sparta_root/build_gpu
 #had issues using Wget
-#wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta.sh -o ~/sparta_root/build_cpu/build_sparta.sh
-#wget https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta_kokkos.sh ~/sparta_root/build_gpu/build_sparta_kokkos.sh
-#chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmod +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
+wget "https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta.sh" -o ~/sparta_root/build_cpu/build_sparta.sh
+wget "https://github.com/ComputationalGasDynamicsLab/sparta_build_scripts/blob/main/talon/build_sparta_kokkos.sh" ~/sparta_root/build_gpu/build_sparta_kokkos.sh
+chmod +x ~/sparta_root/build_cpu/build_sparta.sh && chmod +x ~/sparta_root/build_cpu/build_sparta_kokkos.sh
 
 cd ~/sparta_root/build_cpu  
-# load required modules
-module load gcc/11.2.0
-module load cmake/3.21.3
-module load mpich/ge/gcc/64/3.3.2
-
-# export required environment variables for configuration and build
-export buildroot=$PWD
-export srcroot=$buildroot/../
-export installroot=$buildroot/../install
-
-
-
-
-cmake $srcroot $srcroot/cmake \
-               -DCMAKE_BUILD_TYPE=Release \
-               -DCMAKE_CXX_COMPILER=mpicxx \
-               -DCMAKE_INSTALL_PREFIX=$installroot \
-               -DSPARTA_MACHINE=talon \
-	       -DSPARTA_ENABLE_TESTING=OFF \
-	       -DBUILD_JPEG=ON \
-	       -DBUILD_PNG=ON
-make -j4 install
-
-cd ../build_gpu
-# load required modules
-module load gcc/11.2.0
-module load cmake/3.21.3
-module load mpich/ge/gcc/64/3.3.2
-module load cuda11.8/toolkit/11.8.0
-
-# export required environment variables for configuration and build
-export buildroot=$PWD
-export srcroot=$buildroot/../
-export installroot=$buildroot/../install
-
-export kksrc=$srcroot/lib/kokkos
-export MPICH_CXX=$kksrc/bin/nvcc_wrapper
-
-cmake $srcroot $srcroot/cmake \
-               -DCMAKE_BUILD_TYPE=Release \
-               -DCMAKE_CXX_COMPILER=mpicxx \
-               -DCMAKE_INSTALL_PREFIX=$installroot \
-       	       -DSPARTA_MACHINE=kokkos_talon \
-	       -DSPARTA_ENABLE_TESTING=OFF \
-               -DPKG_KOKKOS=ON \
-               -DKokkos_ARCH_VOLTA70=ON \
-	       -DBUILD_KOKKOS=ON \
-               -DKokkos_ENABLE_CUDA=ON \
-	       -DKokkos_ENABLE_CUDA_LAMBDA=ON \
-               -DKokkos_ENABLE_DEBUG=ON \
-               -DKokkos_ENABLE_OPENMP=OFF \
-	       -DKokkos_ENABLE_SERIAL=ON \
-	       -DBUILD_JPEG=ON \
-	       -DBUILD_PNG=ON
-
-make -j8 install
 
 cd ~ && rm -rf sparta.tar.gz
 ```
@@ -100,7 +44,8 @@ git clone https://github.com/ComputationalGasDynamicsLab/sparta_cases
 ```
 Running the simulation:
 
-In order to run a simulation, you need spa_talon, or spa_kokkos_talon in the directory of the simulation scripts itself
+In order to run a simulation, you need spa_talon, or spa_kokkos_talon in the directory of the simulation scripts itself. For this example, the spa_kokkos_talonw will be contained in the 2D_flow_over_cylinder main directory.
+
 Run the commands as follows:
 
 ```
@@ -132,7 +77,7 @@ wget -O p.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submi
 mkdir Paraview && tar -xzf p.tar.gz -C Paraview --strip-components 1
 echo "export PATH=$PATH:~/ParaView/bin" >> .bashrc
 ```
-Once the simulation is finished, you to post process you need to run the pvpython scripts in the paraview_initialization_scripts folder
+Once the simulation is finished, to post process you need to run the pvpython scripts in the paraview_initialization_scripts folder
 ![image](https://github.com/ComputationalGasDynamicsLab/sparta_cases/assets/10146286/132db81b-21f0-4a76-9b10-ecb8b605ef99)
 
 Run the commands on the head node. These are fine because they are not computationally intensive.
