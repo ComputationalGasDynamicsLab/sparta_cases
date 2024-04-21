@@ -69,6 +69,7 @@ or
 ```
 squeue -u your_und.username
 
+```
 To convert the output into a format readable by Paraview. You must install the paraview tool kit. Run the commands as follows/
 
 ```
