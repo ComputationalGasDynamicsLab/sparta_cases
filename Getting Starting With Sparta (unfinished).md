@@ -21,13 +21,13 @@ copy and paste the commands as follows:
 
 ```
 cd ~
-wget "https://github.com/ComputationalGasDynamicsLab/sparta_cases/tree/Jalen3/install_sparta.sh"
+wget "https://raw.githubusercontent.com/ComputationalGasDynamicsLab/sparta_cases/Jalen3/install_sparta.sh"
 chmod +x install_sparta.sh && ./install_sparta.sh
 
 ```
 To get example sparta case files, download them from the git repository. 
 ```
-cd ~ && mkdir DSMC && cd DSMC && git clone https://github.com/ComputationalGasDynamicsLab/sparta_cases
+cd ~ && mkdir DSMC && cd DSMC && git clone "https://github.com/ComputationalGasDynamicsLab/sparta_cases"
 ```
 Running the simulation:
 
