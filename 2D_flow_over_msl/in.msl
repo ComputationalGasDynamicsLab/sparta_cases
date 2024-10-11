@@ -1,0 +1,81 @@
+seed                 12345
+dimension            2
+global               gridcut 0.0016 comm/sort yes
+global               surfmax 10000
+
+variable            boltz equal 1.380658E-23
+variable            pi equal 3.14159
+
+boundary             o o p 
+create_box           -3 3 -3 3 -0.5 0.5
+create_grid          100 100 1 
+#balance_grid         clump xyz
+balance_grid         block 1 * *
+
+global               nrho 8.6626e+21 fnum 1.7325e+20
+species              mars.species CO2  
+mixture              air CO2 vstream 5600 0 0 temp 162.948
+
+read_surf            surf.msl clip scale 0.15 0.15 1
+surf_collide         wall diffuse 290 1
+surf_modify          all collide wall
+collide              vss all mars.vss
+
+fix                  in emit/face air xlo ylo yhi 
+timestep             1e-6
+
+variable             Nsample equal 1000
+variable	     Namr equal 2000
+variable             nstep equal 4000
+variable             rmfp equal 2.0
+variable             cmfp equal 4.0
+
+compute              mfp grid all air nrho
+fix                  mfp ave/grid all 1 ${Nsample} ${Nsample} c_mfp[*]
+compute              lambda lambda/grid f_mfp NULL CO2 kx
+
+# compute and fix for flow field properties
+compute              flow grid all air n nrho u v w temp
+fix                  flow ave/grid all 1 ${Nsample} ${Nsample} c_flow[*]
+
+dump                 1 image all ${Namr} particle.*.png type type pdiam 0.0001 &
+                     surf proc 0.002 size 1024 1024 zoom 8 &
+                     gline no 0.0005 box yes 0.005
+dump_modify	     1 pad 4
+dump                 2 image all ${Namr} mesh_and_particle.*.png type type particle yes pdiam 0.0005 &
+                     surf one 0.01 size 1024 1024 zoom 8.0 &
+                     gline yes 0.0015 box yes 0.005
+dump                 3 image all ${Namr} flow_vx.*.png type type particle no grid f_flow[2] &
+                     surf one 0.01 size 1024 1024 zoom 8.0 &
+                     box yes 0.005
+dump_modify	     3 pad 4
+
+stats		     5
+stats_style	     step cpu np nattempt ncoll nscoll nscheck
+restart              ${Namr} msl.restart
+
+adapt_grid           all refine surf all 0.0001 iterate 20 dir 1 1 0 
+adapt_grid           all refine surf all 0.0001 iterate 20 dir 1 -1 0 
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${Namr}
+adapt_grid           all refine coarsen value c_lambda[2] ${rmfp} ${cmfp} &
+                     combine min thresh less more maxlevel 3 cells 2 2 1
+balance_grid         rcb cell
+
+run                  ${nstep}
+
