@@ -1,0 +1,37 @@
+# 2D axisymmetric flow over an empty box
+seed                 12345
+dimension            2
+global               gridcut 0.016 comm/sort yes
+
+boundary             o ar p 
+create_box           0.0 1.0 0.0 0.8 -0.5 0.5
+create_grid          250 200 1 
+balance_grid         block 1 * *
+
+global               nrho 4.5249e+20 fnum 2.5e+15
+species              ar.species Ar 
+mixture              ar Ar vstream 2793.8 0 0 temp 100.0
+
+collide              vss ar ar.vhs relax constant
+collide_modify       rotate smooth vibrate smooth 
+
+fix                  in emit/face ar xlo
+timestep             2.0e-06
+
+variable             Nsample equal 5000
+variable             Namr equal 10000
+variable             nstep equal 20000
+
+# compute and fix for flow field properties
+compute             1 grid all ar n nrho massrho u v w temp trot tvib
+fix                 1 ave/grid all 1 ${Nsample} ${Nsample} c_1[*]
+
+dump                1 grid all ${Namr} grid.*.data id f_1[*]
+dump_modify	    1 pad 4
+
+stats		     5
+stats_style	     step cpu np nattempt ncoll nscoll nscheck
+restart              ${Namr} flat_plate.restart
+
+
+run                  ${Namr}
